@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<html>
+    <head>
+        <title>Task 1</title>
+        <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.min.css' %}">
+
+    </head>
+
+    <body>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3"></div>
+                <div class="col-md-6">
+                    <br>
+                    <div class="row">
+                        <div class="col-md-12 text-center">
+                            <h2>Enter Person Details</h2>
+                        </div>
+                    </div>
+                    <br>
+                    <form action="/register" method="post">
+                        {% csrf_token %}
+                        <div class="fieldWrapper">
+                            {{ form.subject.errors }}
+                            <label for="name">Name:</label>
+                            {{ form.name }}
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email :</label>
+                            {{ form.email }}
+                        </div>
+                        <div class="form-group">
+                            <label for="mobile">Mobile :</label>
+                            {{ form.mobile }}
+                        </div>
+                        <div class="form-group">
+                            <label for="address">Address :</label>
+                            {{ form.address }}
+                        </div>
+                        <div class="form-group">
+                            <label class="label">Gender :</label><br>
+                            {{ form.gender }}
+                        </div>
+                        <div class="form-group">
+                            <label for="dob">DOB :</label>
+                            {{ form.dob }}
+                        </div>
+                        <div class="form-group">
+                            <label for="bldgroup">Blood Group :</label>
+                            {{ form.bld_group }}
+                        </div>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <script src="{% static 'css/bootstrap.min.js' %}"></script>
+    </body>
+
+</html>
