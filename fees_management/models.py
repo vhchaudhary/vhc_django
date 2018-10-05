@@ -19,7 +19,7 @@ class Branch(TimeStampedModel):
     institute = models.ForeignKey(Institute, on_delete=models.CASCADE)
     name = models.CharField(max_length=30)
     slug = models.SlugField(max_length=50, unique=True)
-    brochure = models.BinaryField()
+    brochure = models.FileField()
     email = models.EmailField(max_length=35)
     address = models.TextField(max_length=60)
     contact_no = models.CharField(max_length=13)
@@ -31,6 +31,7 @@ class Branch(TimeStampedModel):
 
 class Fee(TimeStampedModel):
     fee_type = models.CharField(max_length=15)
+    branch = models.ForeignKey(Branch, on_delete=models.DO_NOTHING)
     amount = models.FloatField()
     is_active = models.BooleanField(default=True)
 
@@ -45,9 +46,9 @@ class Course(models.Model):
         return self.name
 
 
-class ExtendedUser(User):
+class Student(User, TimeStampedModel):
     enr_no = models.CharField('Enrollment No', unique=True, max_length=10)
-    branch = models.ForeignKey(Branch, on_delete=models.CASCADE)
+    branch = models.OneToOneField(Branch, on_delete=models.SET_NULL, null=True)
     course = models.ForeignKey(Course, on_delete=models.DO_NOTHING)
     address = models.TextField(max_length=60)
     contact_no = models.CharField(max_length=13)

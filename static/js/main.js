@@ -19,10 +19,10 @@ $(document).ready(function(){
             data: {id : $(this).val(), 'csrfmiddlewaretoken': csrftoken},
             'dataType': 'json',
             success: function(response){
-                $.each(response.branches, function(i, val){
-                    select.append(new Option(val, val, true, true));
+                $.each(response.branches, function(id, val){
+                    select.append(new Option(val, id, true, true));
                 });
-                select.first().focus();
+                select.val(select.children().first().val());
             }
         });
         return false;
@@ -43,6 +43,5 @@ $(document).ready(function(){
         }
         return cookieValue;
     }
-
 });
 
