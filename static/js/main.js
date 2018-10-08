@@ -9,6 +9,27 @@ $(document).ready(function(){
         $('#signupbox').hide();
     });
 
+    $(document).on("submit", "#fr_pass_form", function(e){
+        e.preventDefault()
+
+        $.ajax({
+            type: "POST",
+            url: "/send_pass_reset_mail",
+            data: $(this).serialize(),
+            dataType: 'json',
+
+            success: function(response){
+                if(response.success){
+                    $('#lbl_pass_reset_info').show();
+                }
+                else{
+                    $('#lbl_pass_reset_info').show();
+                    $('#lbl_pass_reset_info').text('Enter Valid username or email');
+                }
+            }
+        });
+    });
+
     $(document).on("change", "#inst", function(){
         csrftoken = getCookie('csrftoken');
         select = $('#branch');
@@ -17,7 +38,7 @@ $(document).ready(function(){
             type: "POST",
             url: "/get_branches",
             data: {id : $(this).val(), 'csrfmiddlewaretoken': csrftoken},
-            'dataType': 'json',
+            dataType: 'json',
             success: function(response){
                 $.each(response.branches, function(id, val){
                     select.append(new Option(val, id, true, true));

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<html>
+    <head>
+        <title>Login</title>
+        <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+        <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+        <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+        <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.min.js"></script>
+    </head>
+
+    <body>
+
+        <nav class="navbar navbar-default navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="#">Logo</a>
+                </div>
+                <div class="collapse navbar-collapse" id="myNavbar">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a href="#about">ABOUT</a></li>
+                        <li><a href="#services">SERVICES</a></li>
+                        <li><a href="/logout">Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <br><br>
+        <div class="container">
+            <div style="margin-top:50px;" class="mainbox col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
+                <div class="panel panel-info" >
+                    <div class="panel-heading">
+                        <div class="row">
+                            <div class="panel-title col-md-6">Fee Details</div>
+                            <div class="col-md-6 text-right">{{ user.username }}</div>
+                        </div>
+                    </div>
+
+                    <div style="padding-top:30px" class="panel-body" >
+
+                        <div style="display:none" id="login-alert" class="alert alert-danger col-sm-12"></div>
+
+                        <form id="pay_fee_form" action="/pay" method="post">
+                            {% csrf_token %}
+                            <!--{% for -->
+                            <div style="margin-bottom: 25px" class="form-group">
+                                <input id="login_username" type="text" class="form-control" name="username" value="" placeholder="username" required>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="{% static 'js/main.js' %}"></script>
+    </body>
+</html>
