@@ -1,5 +1,7 @@
+import pdb
+
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, AbstractBaseUser, AbstractUser
 from django_extensions.db.models import TimeStampedModel
 
 
@@ -46,7 +48,8 @@ class Course(models.Model):
         return self.name
 
 
-class Student(User, TimeStampedModel):
+class Student(TimeStampedModel):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     enr_no = models.CharField('Enrollment No', unique=True, max_length=10)
     branch = models.OneToOneField(Branch, on_delete=models.SET_NULL, null=True)
     course = models.ForeignKey(Course, on_delete=models.DO_NOTHING)
@@ -55,7 +58,7 @@ class Student(User, TimeStampedModel):
     dob = models.DateField('Date Of Birth')
 
     def __str__(self):
-        return self.username
+        return self.user.username
 
 
 STATUS = (('pending', 'Pending'), ('completed', 'Completed'), ('failed', 'Failed'))

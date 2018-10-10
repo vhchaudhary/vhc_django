@@ -27,6 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1']
 
+# AUTH_USER_MODEL = "fees_management.User"
 
 # Application definition
 

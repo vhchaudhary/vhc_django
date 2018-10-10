@@ -25,7 +25,7 @@
                     <ul class="nav navbar-nav navbar-right">
                         <li><a href="#about">ABOUT</a></li>
                         <li><a href="#services">SERVICES</a></li>
-                        <li><a href="/logout">Logout</a></li>
+                        <li><a href="/logout">Logout( {{user.username}} )</a></li>
                     </ul>
                 </div>
             </div>
@@ -36,10 +36,7 @@
             <div style="margin-top:50px;" class="mainbox col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
                 <div class="panel panel-info" >
                     <div class="panel-heading">
-                        <div class="row">
-                            <div class="panel-title col-md-6">Fee Details</div>
-                            <div class="col-md-6 text-right">{{ user.username }}</div>
-                        </div>
+                        <div class="panel-title">Fee Details</div>
                     </div>
 
                     <div style="padding-top:30px" class="panel-body" >
@@ -48,9 +45,43 @@
 
                         <form id="pay_fee_form" action="/pay" method="post">
                             {% csrf_token %}
-                            <!--{% for -->
                             <div style="margin-bottom: 25px" class="form-group">
-                                <input id="login_username" type="text" class="form-control" name="username" value="" placeholder="username" required>
+                                <label for="branch">Branch : </label>
+                                <input id="branch" type="text" class="form-control" name="branch" value={{ student.branch.name }} readonly>
+                            </div>
+
+                            <div style="margin-bottom: 25px" class="row">
+                                <div class="col-md-12">
+                                    <table class="table">
+                                    <thead>
+                                        <tr class="info">
+                                            <th>Fee Type</th>
+                                            <th>Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for f in fees %}
+                                        <tr>
+                                            <td><input type="checkbox" value={{ f.amount }} class="check-fee"> {{ f.fee_type }}</td>
+                                            <td>{{ f.amount }}</td>
+                                        </tr>
+                                        {% endfor %}
+
+                                        <tr class="success">
+                                            <td><strong>Total</strong></td>
+                                            <td><strong><span id="span_total">0.0</span></strong><input type="hidden" id="total_amount" value="0.0"></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                </div>
+                            </div>
+
+                            <div class="row text-center">
+                                <div class="col-md-12">
+                                    <div id="paypal-button-container"></div>
+                                    <script src="https://www.paypalobjects.com/api/checkout.js"></script>
+                                    <script src="{% static 'js/paypal.js' %}"></script>
+                                </div>
                             </div>
 
                         </form>

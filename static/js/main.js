@@ -9,6 +9,22 @@ $(document).ready(function(){
         $('#signupbox').hide();
     });
 
+    $(document).on("click", ".check-fee", function(e){
+
+        total = parseFloat($('#total_amount').val());
+
+         if($(this).is(':checked')){
+            total += parseFloat($(this).val());
+         }
+         else{
+            total -= parseFloat($(this).val());
+         }
+
+         $('#total_amount').val(total);
+         $('#span_total').text(total);
+
+    });
+
     $(document).on("submit", "#fr_pass_form", function(e){
         e.preventDefault()
 
