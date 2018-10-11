@@ -25,7 +25,7 @@ SECRET_KEY = 'c0g8g9nuk*lfj!$zm9nt0zi!28ith&q91g3=v$r^z9$*=!p4-)'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1']
+ALLOWED_HOSTS = ["*"]
 
 # AUTH_USER_MODEL = "fees_management.User"
 

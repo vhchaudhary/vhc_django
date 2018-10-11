@@ -26,7 +26,7 @@ $(document).ready(function(){
     });
 
     $(document).on("submit", "#fr_pass_form", function(e){
-        e.preventDefault()
+        e.preventDefault();
 
         $.ajax({
             type: "POST",
@@ -46,6 +46,23 @@ $(document).ready(function(){
         });
     });
 
+
+//    $(document).on("submit", "#pay_fee_form", function(e){
+//        e.preventDefault();
+//
+//        $.ajax({
+//            type: "POST",
+//            url: "/create_payment",
+//            data: {$(this).serialize(), 'csrfmiddlewaretoken': csrftoken}
+//            dataType: 'json',
+//
+//            success: function(response){
+//                alert('Success');
+//            }
+//        });
+//    });
+
+
     $(document).on("change", "#inst", function(){
         csrftoken = getCookie('csrftoken');
         select = $('#branch');
@@ -64,6 +81,7 @@ $(document).ready(function(){
         });
         return false;
     });
+
 
     function getCookie(name) {
         var cookieValue = null;

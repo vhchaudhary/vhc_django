@@ -7,6 +7,7 @@
         <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
         <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
         <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.min.js"></script>
+        <script src="{% static 'js/main.js' %}"></script>
     </head>
 
     <body>
@@ -43,7 +44,7 @@
 
                         <div style="display:none" id="login-alert" class="alert alert-danger col-sm-12"></div>
 
-                        <form id="pay_fee_form" action="/pay" method="post">
+                        <form id="pay_fee_form" action="/create_payment" method="post">
                             {% csrf_token %}
                             <div style="margin-bottom: 25px" class="form-group">
                                 <label for="branch">Branch : </label>
@@ -62,14 +63,14 @@
                                     <tbody>
                                         {% for f in fees %}
                                         <tr>
-                                            <td><input type="checkbox" value={{ f.amount }} class="check-fee"> {{ f.fee_type }}</td>
+                                            <td><input type="checkbox" value={{ f.amount }} name={{ f.fee_type }} class="check-fee"> {{ f.fee_type }}</td>
                                             <td>{{ f.amount }}</td>
                                         </tr>
                                         {% endfor %}
 
                                         <tr class="success">
                                             <td><strong>Total</strong></td>
-                                            <td><strong><span id="span_total">0.0</span></strong><input type="hidden" id="total_amount" value="0.0"></td>
+                                            <td><strong><span id="span_total">0.0</span></strong><input type="hidden" id="total_amount" name="total_amount" value="0.0"></td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -78,17 +79,13 @@
 
                             <div class="row text-center">
                                 <div class="col-md-12">
-                                    <div id="paypal-button-container"></div>
-                                    <script src="https://www.paypalobjects.com/api/checkout.js"></script>
-                                    <script src="{% static 'js/paypal.js' %}"></script>
+                                    <button type="submit" class="btn btn-primary">Make Payment</button>
                                 </div>
                             </div>
-
                         </form>
                     </div>
                 </div>
             </div>
         </div>
-        <script src="{% static 'js/main.js' %}"></script>
     </body>
 </html>
