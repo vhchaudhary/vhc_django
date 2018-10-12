@@ -12,5 +12,5 @@ urlpatterns = [
     path('send_pass_reset_mail', views.send_pass_reset_mail, name="send_pass_reset_mail"),
     path('pay_fee', views.pay_fee, name='pay_fee'),
     path('create_payment', views.create_payment, name='create_payment'),
-    path('pay_success', views.pay_success, name='pay_success'),
+    path('pay_done', views.payment_done, name='payment_done'),
 ]

@@ -14,23 +14,23 @@ from .models import *
 
 
 def create_payment(request):
-
-    pdb.set_trace()
+    # pdb.set_trace()
 
     if request.POST:
-        amount = float(request.POST.get('total_amount'))
+        amount = request.POST.get('total_amount')
+
         paypalrestsdk.configure({
             "mode": "sandbox",  # sandbox or live
-            "client_id": "AdI02zdsmtJXaow8V5FYGeU9FU7L5R7upFtf4CQIla4KaCgzAvn9c1kbABAMZH_WIvgdP7iYzxU8Dzyo",
-            "client_secret": "EKyBWNYOENY4mQrSCMwpV3XIa1ycAVS3SM0C5oObtslWMDaHCSECKkFSmzh9HtYGm3VdTv6OewVfcRcy"})
+            "client_id": "AV_f8yB3mIB88XeUCd9CW47a_pSb42wIiEj7NK9Pgos8P7wS1mWdQB1on6OtNxJGe1t1e-HsWN0YQiOt",
+            "client_secret": "EGfsn0Tx1c9Bgxch-Pa9tEOqaAP1haXsKiMvb9ehQeaiQOndMSTxZ5Kqhk2eQ5_RAjrtqTtVwAd1yWa9"})
 
         payment = paypalrestsdk.Payment({
             "intent": "sale",
             "payer": {
                 "payment_method": "paypal"},
             "redirect_urls": {
-                "return_url": "http://127.0.0.1:8000/pay_success",
-                "cancel_url": "http://localhost:8000/pay_fail"},
+                "return_url": "http://127.0.0.1:8000/pay_done",
+                "cancel_url": "http://127.0.0.1:8000/pay_fail"},
             "transactions": [{
                 "item_list": {
                     "items": [{
@@ -58,33 +58,34 @@ def create_payment(request):
             print(payment.error)
 
 
-def pay_success(request):
+def payment_done(request):
+    pdb.set_trace()
     if request.method == "GET":
         payment = paypalrestsdk.Payment.find(request.GET.get('paymentId'))
 
-        pdb.set_trace()
+        payer_id = payment.payer.payer_info.payer_id
 
-        # invoice = Invoice({
-        #     'merchant_info': {
-        #         "email": "default@merchant.com",
-        #     },
-        #     "billing_info": [{
-        #         "email": "example@example.com"
-        #     }],
-        #     "items": [{
-        #         "name": "Widgets",
-        #         "quantity": 20,
-        #         "unit_price": {
-        #             "currency": "USD",
-        #             "value": 2
-        #         }
-        #     }],
-        # })
-        #
-        # response = invoice.create()
-        # print(response)
+        if payment.execute({"payer_id": payer_id}):
+            print("Payment execute successfully")
+        else:
+            print(payment.error)
 
-        return HttpResponse('payment Success')
+        tr = Transaction(uuid=payment.id, user=User.objects.get(pk=int(request.user.id)), status='completed',
+                         paid_amount=float(payment.transactions[0].amount.total))
+
+        # tr.save()
+
+        vals = {}
+        if payment:
+            vals.update({'id': payment.id,
+                         'payer': payment.payer.payer_info.email,
+                         'merchant': payment.transactions[0].payee.merchant_id,
+                         'amount': payment.transactions[0].amount.total,
+                         'date': payment.create_time})
+
+        # pdb.set_trace()
+
+        return render(request, 'fees/pay_done.html', {'vals': vals})
 
 
 @csrf_exempt
@@ -132,7 +133,8 @@ def register(request):
         address = request.POST.get('address')
         dob = request.POST.get('dob')
 
-        user = User.objects.create_user(username=username, email=email, password=password, first_name=fname, last_name=lname)
+        user = User.objects.create_user(username=username, email=email, password=password, first_name=fname,
+                                        last_name=lname)
         student = Student(user=user, enr_no=enr_no, branch=branch, course=course, address=address, dob=dob)
         user.save()
         student.save()

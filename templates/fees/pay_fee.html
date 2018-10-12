@@ -63,7 +63,7 @@
                                     <tbody>
                                         {% for f in fees %}
                                         <tr>
-                                            <td><input type="checkbox" value={{ f.amount }} name={{ f.fee_type }} class="check-fee"> {{ f.fee_type }}</td>
+                                            <td><input type="checkbox" value={{ f.amount }} class="check-fee"> {{ f.fee_type }}</td>
                                             <td>{{ f.amount }}</td>
                                         </tr>
                                         {% endfor %}
