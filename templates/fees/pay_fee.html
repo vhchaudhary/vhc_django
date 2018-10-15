@@ -1,91 +1,68 @@
 <!DOCTYPE html>
-{% load staticfiles %}
-<html>
-    <head>
-        <title>Login</title>
-        <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
-        <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-        <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
-        <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.min.js"></script>
-        <script src="{% static 'js/main.js' %}"></script>
-    </head>
 
-    <body>
+{% extends 'base.html' %}
+{% block title %}Pay Fee{% endblock %}
+{% block nav_bar %}<li><a href="/logout">Logout( {{user.username}} )</a></li>{% endblock %}
+{% block nav %}{{ block.super }}{% endblock %}
 
-        <nav class="navbar navbar-default navbar-fixed-top">
-            <div class="container">
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                    <a class="navbar-brand" href="#">Logo</a>
+{% block content %}
+
+    <br><br>
+    <div class="container">
+        <div style="margin-top:50px;" class="mainbox col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
+            <div class="panel panel-info" >
+                <div class="panel-heading">
+                    <div class="panel-title">Fee Details</div>
                 </div>
-                <div class="collapse navbar-collapse" id="myNavbar">
-                    <ul class="nav navbar-nav navbar-right">
-                        <li><a href="#about">ABOUT</a></li>
-                        <li><a href="#services">SERVICES</a></li>
-                        <li><a href="/logout">Logout( {{user.username}} )</a></li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
 
-        <br><br>
-        <div class="container">
-            <div style="margin-top:50px;" class="mainbox col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
-                <div class="panel panel-info" >
-                    <div class="panel-heading">
-                        <div class="panel-title">Fee Details</div>
-                    </div>
+                <div style="padding-top:30px" class="panel-body" >
 
-                    <div style="padding-top:30px" class="panel-body" >
+                    <div style="display:none" id="login-alert" class="alert alert-danger col-sm-12"></div>
 
-                        <div style="display:none" id="login-alert" class="alert alert-danger col-sm-12"></div>
+                    <form id="pay_fee_form" action="/create_payment" method="post">
+                        {% csrf_token %}
+                        <div style="margin-bottom: 25px" class="form-group">
+                            <label for="branch">Branch : </label>
+                            <input id="branch" type="text" class="form-control" name="branch" value={{ student.branch.name }} readonly>
+                        </div>
 
-                        <form id="pay_fee_form" action="/create_payment" method="post">
-                            {% csrf_token %}
-                            <div style="margin-bottom: 25px" class="form-group">
-                                <label for="branch">Branch : </label>
-                                <input id="branch" type="text" class="form-control" name="branch" value={{ student.branch.name }} readonly>
+                        <div style="margin-bottom: 25px" class="row">
+                            <div class="col-md-12">
+                                <table class="table">
+                                <thead>
+                                    <tr class="info">
+                                        <th>Fee Type</th>
+                                        <th>Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for f in fees %}
+                                    <tr>
+                                        <td>
+                                            <input type="checkbox" value={{ f.amount }} data={{ f.id }} class="check-fee"> {{ f.fee_type }}
+                                            <!--<input type="hidden" class="btn-pay" >-->
+                                        </td>
+                                        <td>{{ f.amount }}</td>
+                                    </tr>
+                                    {% endfor %}
+
+                                    <tr class="success">
+                                        <td><strong>Total</strong></td>
+                                        <td><strong><span id="span_total">0.0</span></strong><input type="hidden" id="total_amount" name="total_amount" value="0.0"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
                             </div>
-
-                            <div style="margin-bottom: 25px" class="row">
-                                <div class="col-md-12">
-                                    <table class="table">
-                                    <thead>
-                                        <tr class="info">
-                                            <th>Fee Type</th>
-                                            <th>Amount</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for f in fees %}
-                                        <tr>
-                                            <td><input type="checkbox" value={{ f.amount }} class="check-fee"> {{ f.fee_type }}</td>
-                                            <td>{{ f.amount }}</td>
-                                        </tr>
-                                        {% endfor %}
-
-                                        <tr class="success">
-                                            <td><strong>Total</strong></td>
-                                            <td><strong><span id="span_total">0.0</span></strong><input type="hidden" id="total_amount" name="total_amount" value="0.0"></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                                </div>
+                        </div>
+                        <div class="row text-center">
+                            <div class="col-md-12">
+                                <button type="button" id="btn_submit" class="btn btn-primary">Make Payment</button>
                             </div>
-
-                            <div class="row text-center">
-                                <div class="col-md-12">
-                                    <button type="submit" class="btn btn-primary">Make Payment</button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
-    </body>
-</html>
+    </div>
+
+{% endblock %}

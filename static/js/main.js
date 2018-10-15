@@ -14,8 +14,6 @@ $(document).ready(function(){
 
         total = parseFloat($('#total_amount').val());
 
-//        if(total==0.0 && parseFloat($('#span_total').text())
-
         if($(this).is(':checked')){
             total += parseFloat($(this).val());
         }
@@ -50,21 +48,39 @@ $(document).ready(function(){
     });
 
 
-//    $(document).on("submit", "#pay_fee_form", function(e){
-//        e.preventDefault();
-//
-//        $.ajax({
-//            type: "POST",
-//            url: "/create_payment",
-//            data: {$(this).serialize(), 'csrfmiddlewaretoken': csrftoken}
-//            dataType: 'json',
-//
-//            success: function(response){
-//                alert('Success');
-//            }
-//        });
-//    });
+    $(document).on("click", "#btn_submit", function(){
 
+        ids = [];
+        $(".check-fee").each(function(){
+            if($(this).is(':checked')){
+                ids.push($(this).attr('data'));
+            }
+        });
+
+        if(ids.length == 0){
+            alert('Select atleast one Fees');
+            return false;
+        }
+
+        csrftoken = getCookie('csrftoken');
+        $.ajax({
+            type: "POST",
+            url: "/get_amount",
+            data: {ids:ids, 'csrfmiddlewaretoken': csrftoken},
+            dataType: 'json',
+
+            success: function(response){
+                if(response.amount != false){
+                    $('#total_amount').val(response.amount);
+                    $('#pay_fee_form').submit();
+                }
+                else{
+                    alert('Invalid Amount');
+                }
+            }
+        });
+
+    });
 
     $(document).on("change", "#inst", function(){
         csrftoken = getCookie('csrftoken');

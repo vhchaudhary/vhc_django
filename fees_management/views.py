@@ -1,7 +1,6 @@
+import logging
 import pdb
-
 import paypalrestsdk
-from paypalrestsdk import Invoice
 from django.contrib.auth import authenticate, login, logout
 from django.http import JsonResponse, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
@@ -19,50 +18,62 @@ def create_payment(request):
     if request.POST:
         amount = request.POST.get('total_amount')
 
-        paypalrestsdk.configure({
-            "mode": "sandbox",  # sandbox or live
-            "client_id": "AV_f8yB3mIB88XeUCd9CW47a_pSb42wIiEj7NK9Pgos8P7wS1mWdQB1on6OtNxJGe1t1e-HsWN0YQiOt",
-            "client_secret": "EGfsn0Tx1c9Bgxch-Pa9tEOqaAP1haXsKiMvb9ehQeaiQOndMSTxZ5Kqhk2eQ5_RAjrtqTtVwAd1yWa9"})
+        if amount:
+            paypalrestsdk.configure({
+                "mode": "sandbox",  # sandbox or live
+                "client_id": "AV_f8yB3mIB88XeUCd9CW47a_pSb42wIiEj7NK9Pgos8P7wS1mWdQB1on6OtNxJGe1t1e-HsWN0YQiOt",
+                "client_secret": "EGfsn0Tx1c9Bgxch-Pa9tEOqaAP1haXsKiMvb9ehQeaiQOndMSTxZ5Kqhk2eQ5_RAjrtqTtVwAd1yWa9"})
 
-        payment = paypalrestsdk.Payment({
-            "intent": "sale",
-            "payer": {
-                "payment_method": "paypal"},
-            "redirect_urls": {
-                "return_url": "http://127.0.0.1:8000/pay_done",
-                "cancel_url": "http://127.0.0.1:8000/pay_fail"},
-            "transactions": [{
-                "item_list": {
-                    "items": [{
-                        "name": "Fee",
-                        "sku": "Fee",
-                        "price": amount,
-                        "currency": "USD",
-                        "quantity": 1}]},
-                "amount": {
-                    "total": amount,
-                    "currency": "USD"},
-                "description": "This is the payment transaction description."}]})
+            payment = paypalrestsdk.Payment({
+                "intent": "sale",
+                "payer": {"payment_method": "paypal"},
+                "redirect_urls": {
+                    "return_url": "http://127.0.0.1:8000/pay_done",
+                    "cancel_url": "http://127.0.0.1:8000/pay_fail"},
+                "transactions": [{"item_list": {
+                        "items": [{
+                            "name": "Education Fee",
+                            "sku": "Fee",
+                            "price": amount,
+                            "currency": "USD",
+                            "quantity": 1}]},
+                    "amount": {"total": amount, "currency": "USD"},
+                    "description": "This is the payment transaction description."}]})
 
-        if payment.create():
-            print("Payment created successfully")
+            if payment.create():
+                logging.info("Payment created successfully")
 
-            for link in payment.links:
-                if link.rel == "approval_url":
-                    # Convert to str to avoid Google App Engine Unicode issue
-                    # https://github.com/paypal/rest-api-sdk-python/pull/58
-                    approval_url = str(link.href)
-                    print("Redirect for approval: %s" % (approval_url))
-                    return HttpResponseRedirect(approval_url)
+                for link in payment.links:
+                    if link.rel == "approval_url":
+                        # Convert to str to avoid Google App Engine Unicode issue
+                        # https://github.com/paypal/rest-api-sdk-python/pull/58
+                        approval_url = str(link.href)
+                        logging.info("Redirect for approval: %s" % (approval_url))
+                        return HttpResponseRedirect(approval_url)
+            else:
+                logging.info(payment.error)
         else:
-            print(payment.error)
+            logging.error("Invalid Amount...")
+
+
+def get_amount(request):
+    
+    if request.method == "POST" and request.is_ajax():
+        branch_ids = dict(request.POST).get('ids[]', False)
+
+        try:
+            total_amount = Fee.objects.filter(pk__in=branch_ids).aggregate(Sum('amount')).get('amount__sum')
+        except TypeError:
+            return JsonResponse({'amount': False})
+
+        return JsonResponse({'amount': total_amount})
 
 
 def payment_done(request):
-    pdb.set_trace()
+    # pdb.set_trace()
     if request.method == "GET":
-        payment = paypalrestsdk.Payment.find(request.GET.get('paymentId'))
 
+        payment = paypalrestsdk.Payment.find(request.GET.get('paymentId'))
         payer_id = payment.payer.payer_info.payer_id
 
         if payment.execute({"payer_id": payer_id}):
@@ -72,8 +83,7 @@ def payment_done(request):
 
         tr = Transaction(uuid=payment.id, user=User.objects.get(pk=int(request.user.id)), status='completed',
                          paid_amount=float(payment.transactions[0].amount.total))
-
-        # tr.save()
+        tr.save()
 
         vals = {}
         if payment:
@@ -111,35 +121,13 @@ def log_in(request):
     return render(request, 'fees/login.html', {'institutes': institutes, 'courses': courses})
 
 
-def pay_fee(request):
-    return render(request, 'fees/pay_fee.html')
-
-
 def log_out(request):
     logout(request)
-    return render(request, 'fees/login.html')
 
+    institutes = Institute.objects.all().values()
+    courses = Course.objects.all().values()
 
-def register(request):
-    if request.method == 'POST':
-        username = request.POST.get('username')
-        email = request.POST.get('email')
-        password = request.POST.get('c_password')
-        enr_no = request.POST.get('enr_no')
-        fname = request.POST.get('fname')
-        lname = request.POST.get('lname')
-        branch = Branch.objects.get(pk=int(request.POST.get('branch')))
-        course = Course.objects.get(pk=int(request.POST.get('course')))
-        address = request.POST.get('address')
-        dob = request.POST.get('dob')
-
-        user = User.objects.create_user(username=username, email=email, password=password, first_name=fname,
-                                        last_name=lname)
-        student = Student(user=user, enr_no=enr_no, branch=branch, course=course, address=address, dob=dob)
-        user.save()
-        student.save()
-
-    return render(request, 'fees/login.html')
+    return render(request, 'fees/login.html', {'institutes': institutes, 'courses': courses})
 
 
 def get_branches(request):
@@ -167,5 +155,26 @@ def send_pass_reset_mail(request):
             return JsonResponse({'success': True})
 
         except User.DoesNotExist:
-
             return JsonResponse({'success': False})
+
+
+def register(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        password = request.POST.get('c_password')
+        enr_no = request.POST.get('enr_no')
+        fname = request.POST.get('fname')
+        lname = request.POST.get('lname')
+        branch = Branch.objects.get(pk=int(request.POST.get('branch')))
+        course = Course.objects.get(pk=int(request.POST.get('course')))
+        address = request.POST.get('address')
+        dob = request.POST.get('dob')
+
+        user = User.objects.create_user(username=username, email=email, password=password, first_name=fname,
+                                        last_name=lname)
+        student = Student(user=user, enr_no=enr_no, branch=branch, course=course, address=address, dob=dob)
+        user.save()
+        student.save()
+
+    return render(request, 'fees/login.html')

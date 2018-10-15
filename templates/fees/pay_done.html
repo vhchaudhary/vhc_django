@@ -1,82 +1,58 @@
 <!DOCTYPE html>
+
+{% extends 'base.html' %}
 {% load staticfiles %}
-<html>
-    <head>
-        <title>Login</title>
-        <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
-        <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-        <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
-        <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.min.js"></script>
-        <script src="{% static 'js/main.js' %}"></script>
-    </head>
+{% block title %}Pay Done{% endblock %}
+{% block nav_bar %}<li><a href="/logout">Logout( {{user.username}} )</a></li>{% endblock %}
+{% block nav %}{{ block.super }}{% endblock %}
 
-    <body>
+{% block content %}
 
-        <nav class="navbar navbar-default navbar-fixed-top">
-            <div class="container">
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                    <a class="navbar-brand" href="#">Logo</a>
+    <br><br>
+    <div class="container">
+        <div style="margin-top:50px;" class="mainbox col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
+            <div class="panel panel-info" >
+                <div class="panel-heading">
+                    <div class="panel-title">Transaction Details</div>
                 </div>
-                <div class="collapse navbar-collapse" id="myNavbar">
-                    <ul class="nav navbar-nav navbar-right">
-                        <li><a href="#about">ABOUT</a></li>
-                        <li><a href="#services">SERVICES</a></li>
-                        <li><a href="/logout">Logout( {{user.username}} )</a></li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
 
-        <br><br>
-        <div class="container">
-            <div style="margin-top:50px;" class="mainbox col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
-                <div class="panel panel-info" >
-                    <div class="panel-heading">
-                        <div class="panel-title">Transaction Details</div>
+                <div style="padding-top:30px" class="panel-body" >
+
+                    <div style="margin-bottom: 25px" class="row">
+                        <div class="col-md-12">
+                            <table class="table">
+                                <tbody>
+                                    <th>Transaction ID</th>
+                                    <td>{{ vals.id }}</td>
+                                </tbody>
+                                <tbody>
+                                    <th>Payer</th>
+                                    <td>{{ vals.payer }}</td>
+                                </tbody>
+                                <tbody>
+                                    <th>Merchant id</th>
+                                    <td>{{ vals.merchant }}</td>
+                                </tbody>
+                                <tbody>
+                                    <th>Amount</th>
+                                    <td>{{ vals.amount }}</td>
+                                </tbody>
+                                <tbody>
+                                    <th>Date/time</th>
+                                    <td>{{ vals.date }}</td>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
 
-                    <div style="padding-top:30px" class="panel-body" >
-
-                        <div style="margin-bottom: 25px" class="row">
-                            <div class="col-md-12">
-                                <table class="table">
-                                    <tbody>
-                                        <th>Transaction ID</th>
-                                        <td>{{ vals.id }}</td>
-                                    </tbody>
-                                    <tbody>
-                                        <th>Payer</th>
-                                        <td>{{ vals.payer }}</td>
-                                    </tbody>
-                                    <tbody>
-                                        <th>Merchant id</th>
-                                        <td>{{ vals.merchant }}</td>
-                                    </tbody>
-                                    <tbody>
-                                        <th>Amount</th>
-                                        <td>{{ vals.amount }}</td>
-                                    </tbody>
-                                    <tbody>
-                                        <th>Date/time</th>
-                                        <td>{{ vals.date }}</td>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-
-                        <div class="row text-center">
-                            <div class="col-md-12">
-                                <button type="button" class="btn btn-primary">Print</button>
-                            </div>
+                    <div class="row text-center">
+                        <div class="col-md-12">
+                            <button type="button" class="btn btn-primary">Print</button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </body>
-</html>
+    </div>
+
+{% endblock %}

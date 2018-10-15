@@ -13,6 +13,10 @@ class Institute(TimeStampedModel):
     contact_no = models.CharField(max_length=13)
     is_active = models.BooleanField(default=True)
 
+    def delete(self):
+        self.is_active = False
+        self.save()
+
     def __str__(self):
         return self.name
 
@@ -27,6 +31,10 @@ class Branch(TimeStampedModel):
     contact_no = models.CharField(max_length=13)
     is_active = models.BooleanField(default=True)
 
+    # def delete(self):
+    #     self.is_active = False
+    #     self.save()
+
     def __str__(self):
         return self.name
 
@@ -36,6 +44,10 @@ class Fee(TimeStampedModel):
     branch = models.ForeignKey(Branch, on_delete=models.DO_NOTHING)
     amount = models.FloatField()
     is_active = models.BooleanField(default=True)
+
+    def delete(self):
+        self.is_active = False
+        self.save()
 
     def __str__(self):
         return self.fee_type
@@ -56,6 +68,11 @@ class Student(TimeStampedModel):
     address = models.TextField(max_length=60)
     contact_no = models.CharField(max_length=13)
     dob = models.DateField('Date Of Birth')
+    is_active = models.BooleanField(default=True)
+
+    def delete(self):
+        self.is_active = False
+        self.save()
 
     def __str__(self):
         return self.user.username
@@ -65,7 +82,7 @@ STATUS = (('pending', 'Pending'), ('completed', 'Completed'), ('failed', 'Failed
 
 
 class Transaction(TimeStampedModel):
-    uuid =  models.CharField(primary_key=True, max_length=10)
+    uuid =  models.CharField(primary_key=True, max_length=50)
     user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
     paid_amount = models.FloatField()
     status = models.CharField(choices=STATUS, max_length=10)
