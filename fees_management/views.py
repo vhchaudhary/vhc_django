@@ -51,7 +51,7 @@ def create_payment(request):
                         logging.info("Redirect for approval: %s" % (approval_url))
                         return HttpResponseRedirect(approval_url)
             else:
-                logging.info(payment.error)
+                logging.error(payment.error)
         else:
             logging.error("Invalid Amount...")
 

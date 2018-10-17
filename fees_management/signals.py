@@ -12,7 +12,7 @@ from . models import Branch
 @receiver(post_save, sender=Branch)
 def send_branch_created_mail(sender, instance, created, **kwargs):
 
-    pdb.set_trace()
+    # pdb.set_trace()
 
     try:
         subject = "Branch creation successfully"
@@ -20,5 +20,5 @@ def send_branch_created_mail(sender, instance, created, **kwargs):
         email = EmailMessage(subject, email_msg, settings.EMAIL_HOST_USER, [instance.email])
         email.send()
 
-    except User.DoesNotExist:
+    except:
         pass
