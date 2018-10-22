@@ -27,11 +27,15 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
+CELERY_BROKER_URL = 'amqp://localhost'
+
 # AUTH_USER_MODEL = "fees_management.User"
 
 # Application definition
 
 INSTALLED_APPS = [
+    'celery',
+    'import_export',
     'fees_management.apps.FeesManagementConfig',
     'django.contrib.admin',
     'django.contrib.auth',

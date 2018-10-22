@@ -6,3 +6,4 @@ class FeesManagementConfig(AppConfig):
 
     def ready(self):
         import fees_management.signals
+        import fees_management.cron

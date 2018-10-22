@@ -1,0 +1,3 @@
+celery
+django_extensions
+django-import-export

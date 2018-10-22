@@ -1,10 +1,10 @@
 from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+from import_export.admin import ImportExportModelAdmin
+from . models import *
 
-from .models import *
 
-
-class StudentAdmin(admin.ModelAdmin):
+class StudentAdmin(ImportExportModelAdmin):
+    # change_list_template = 'admin/import_export.html'
     list_display = ('enr_no', 'get_user', 'get_first_name', 'get_last_name', 'branch', 'course')
     search_fields = ['enr_no']
     list_filter = ['is_active']
@@ -31,7 +31,7 @@ class StudentAdmin(admin.ModelAdmin):
         return True
 
 
-class InstituteAdmin(admin.ModelAdmin):
+class InstituteAdmin(ImportExportModelAdmin):
     list_display = ('name', 'email', 'contact_no')
     search_fields = ['name', 'email', 'contact_no']
     list_filter = ['is_active']
@@ -43,7 +43,7 @@ class InstituteAdmin(admin.ModelAdmin):
         return True
 
 
-class BranchAdmin(admin.ModelAdmin):
+class BranchAdmin(ImportExportModelAdmin):
     list_display = ('name', 'institute', 'email', 'contact_no')
     search_fields = ['name', 'slug', 'email', 'contact_no']
     list_filter = ['is_active']
