@@ -27,14 +27,22 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
-CELERY_BROKER_URL = 'amqp://localhost'
+# CRONJOBS = [
+#     ('*/1 * * * *', 'fees_management.cron.my_scheduled_job', '>> /home/vahtabhai/env_vhc/vhc_project/fees_management/cron_logs.log')
+# ]
 
-# AUTH_USER_MODEL = "fees_management.User"
+CELERY_BROKER_URL = 'amqp://localhost'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_RESULT_BACKEND = 'djcelery.backends.database:DatabaseBackend'
+CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
 
 # Application definition
 
 INSTALLED_APPS = [
-    'celery',
+    'djcelery',
+    'django_crontab',
     'import_export',
     'fees_management.apps.FeesManagementConfig',
     'django.contrib.admin',
@@ -119,10 +127,10 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 # Mail configurations
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_USE_TLS = True
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
+EMAIL_HOST = '127.0.0.1'
+EMAIL_PORT = 1025
 EMAIL_HOST_USER = 'vahta.chaudhari@ia.ooo'
 EMAIL_HOST_PASSWORD = ''
 

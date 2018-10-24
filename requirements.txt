@@ -1,3 +1,6 @@
-celery
 django_extensions
 django-import-export
+celery
+django-celery
+django-crontab
+mailcatcher

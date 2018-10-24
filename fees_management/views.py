@@ -76,6 +76,8 @@ def payment_done(request):
         payment = paypalrestsdk.Payment.find(request.GET.get('paymentId'))
         payer_id = payment.payer.payer_info.payer_id
 
+        pdb.set_trace()
+
         if payment.execute({"payer_id": payer_id}):
             print("Payment execute successfully")
         else:

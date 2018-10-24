@@ -1,13 +1,26 @@
 from django.contrib import admin
-from import_export.admin import ImportExportModelAdmin
+from import_export.admin import ImportExportModelAdmin, ImportExportActionModelAdmin
+from import_export import resources
 from . models import *
 
 
-class StudentAdmin(ImportExportModelAdmin):
+# class UserResourse(resources.ModelResource):
+#     class Meta:
+#         model = Student
+#         fields = ('user__username', 'enr_no', 'branch__name')
+
+
+class StudentAdmin(ImportExportModelAdmin, ImportExportActionModelAdmin):
     # change_list_template = 'admin/import_export.html'
     list_display = ('enr_no', 'get_user', 'get_first_name', 'get_last_name', 'branch', 'course')
     search_fields = ['enr_no']
     list_filter = ['is_active']
+
+    # def process_dataset(self, dataset, confirm_form, request, *args, **kwargs):
+    #     pdb.set_trace()
+    #     res = super(StudentAdmin, self).process_dataset(self, dataset, confirm_form, request, *args, **kwargs)
+    #     pdb.set_trace()
+    #     return res
 
     def get_user(self, obj):
         return obj.user.username
