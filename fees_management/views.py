@@ -9,7 +9,8 @@ from django.core.mail import EmailMessage
 from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from vhc_project import settings
-from .models import *
+from . models import *
+from . import tasks
 
 
 def create_payment(request):
@@ -102,6 +103,9 @@ def payment_done(request):
 
 @csrf_exempt
 def log_in(request):
+
+    # tasks.shared_task_test.delay(1000)
+
     if request.method == 'POST':
         user_name = request.POST.get('username')
         password = request.POST.get('password')
