@@ -4,6 +4,12 @@
 Installation:
 
     sudo pip3 install -r requirement.txt
+    
+Install MailCatcher:
+    
+     apt install build-essential libsqlite3-dev ruby-dev
+     
+       
 
 Run Celery server:
 
