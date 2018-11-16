@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+
+{% extends 'base.html' %}
+{% block title %}oxford{% endblock %}
+{% block nav_bar %}<li><a href="/logout">Logout( {{user.username}} )</a></li>{% endblock %}
+{% block nav %}{{ block.super }}{% endblock %}
+
+{% block content %}
+
+    <br><br>
+    <div class="container">
+        <div style="margin-top:50px;" class="mainbox col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
+            <div class="panel panel-info" >
+                <div class="panel-heading">
+                    <div class="panel-title">Search Words</div>
+                </div>
+
+                <div style="padding-top:30px" class="panel-body" >
+
+                    <div style="display:none" id="login-alert" class="alert alert-danger col-sm-12"></div>
+
+                    <form method="get">
+                        {% csrf_token %}
+
+                        <div style="margin-bottom: 25px" class="row">
+                            <div class="col-md-12">
+                                {{ form.as_p }}
+                            </div>
+                        </div>
+                        <div class="row text-center">
+                            <div class="col-md-12">
+                                <button type="submit" class="btn btn-primary">Search</button>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                {% if search_result %}
+                                    <hr>
+                                    {% if search_result.success %}
+                                      {% for result in search_result.results %}
+                                        <h3>{{ result.word }}</h3>
+                                        {% for lexicalentry in result.lexicalEntries %}
+                                          <h4>{{ lexicalentry.lexicalCategory }}</h4>
+                                          <ul>
+                                            {% for entry in lexicalentry.entries %}
+                                              {% for sense in entry.senses %}
+                                                {% for definition in sense.definitions %}
+                                                  <li>{{ definition }}</li>
+                                                {% endfor %}
+                                              {% endfor %}
+                                            {% endfor %}
+                                          </ul>
+                                        {% endfor %}
+                                      {% endfor %}
+                                    {% else %}
+                                      <p><em>{{ search_result.message }}</em></p>
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

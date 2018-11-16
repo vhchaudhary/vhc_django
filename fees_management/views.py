@@ -1,5 +1,4 @@
 import logging
-import pdb
 import paypalrestsdk
 from django.contrib.auth import authenticate, login, logout
 from django.http import JsonResponse, HttpResponse, HttpResponseRedirect
@@ -10,11 +9,10 @@ from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from vhc_project import settings
 from . models import *
-from . import tasks
+from decouple import config
 
 
 def create_payment(request):
-    # pdb.set_trace()
 
     if request.POST:
         amount = request.POST.get('total_amount')
@@ -22,8 +20,8 @@ def create_payment(request):
         if amount:
             paypalrestsdk.configure({
                 "mode": "sandbox",  # sandbox or live
-                "client_id": "AV_f8yB3mIB88XeUCd9CW47a_pSb42wIiEj7NK9Pgos8P7wS1mWdQB1on6OtNxJGe1t1e-HsWN0YQiOt",
-                "client_secret": "EGfsn0Tx1c9Bgxch-Pa9tEOqaAP1haXsKiMvb9ehQeaiQOndMSTxZ5Kqhk2eQ5_RAjrtqTtVwAd1yWa9"})
+                "client_id": config('client_id', default=''),
+                "client_secret": config('client_secret', default='')})
 
             payment = paypalrestsdk.Payment({
                 "intent": "sale",
@@ -71,13 +69,10 @@ def get_amount(request):
 
 
 def payment_done(request):
-    # pdb.set_trace()
     if request.method == "GET":
 
         payment = paypalrestsdk.Payment.find(request.GET.get('paymentId'))
         payer_id = payment.payer.payer_info.payer_id
-
-        pdb.set_trace()
 
         if payment.execute({"payer_id": payer_id}):
             print("Payment execute successfully")
@@ -96,7 +91,6 @@ def payment_done(request):
                          'amount': payment.transactions[0].amount.total,
                          'date': payment.create_time})
 
-        # pdb.set_trace()
 
         return render(request, 'fees/pay_done.html', {'vals': vals})
 
@@ -111,12 +105,10 @@ def log_in(request):
         password = request.POST.get('password')
 
         user = authenticate(request, username=user_name, password=password)
-        # pdb.set_trace()
         if user is not None:
             login(request, user)
             student = Student.objects.get(user=user.id)
             fees = Fee.objects.filter(branch=student.branch).values()
-            # pdb.set_trace()
             return render(request, 'fees/pay_fee.html', {'student': student, 'fees': fees})
         else:
             return HttpResponse("Login Failed")

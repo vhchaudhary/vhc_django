@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
 import os
+from decouple import config
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -26,6 +27,9 @@ SECRET_KEY = 'c0g8g9nuk*lfj!$zm9nt0zi!28ith&q91g3=v$r^z9$*=!p4-)'
 DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
+
+OXFORD_APP_ID = config('OXFORD_APP_ID', default='')
+OXFORD_APP_KEY = config('OXFORD_APP_KEY', default='')
 
 # CRONJOBS = [
 #     ('*/1 * * * *', 'fees_management.cron.my_scheduled_job', '>> /home/vahtabhai/env_vhc/vhc_project/fees_management/cron_logs.log')
@@ -45,6 +49,7 @@ INSTALLED_APPS = [
     'djcelery',
     'django_crontab',
     'import_export',
+    'test_REST.apps.TestRestConfig',
     'fees_management.apps.FeesManagementConfig',
     'django.contrib.admin',
     'django.contrib.auth',
